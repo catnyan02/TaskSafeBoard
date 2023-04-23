@@ -14,19 +14,19 @@ def is_running(proc):
     return proc and proc.poll() is None
 
 
-@app.post("/api/top", responses={400: {"description": "Already running"}})
+@app.post("/api/spass", responses={400: {"description": "Already running"}})
 async def start_process():
     global process
 
     if is_running(process):
         raise HTTPException(status_code=400, detail="Already running")
 
-    process = Popen(['top', '-b', '-d', '60', '-n', '5'], stdout=PIPE, stderr=PIPE)
+    process = Popen(['SPASS', '-Auto', '-PGiven=0', '-PProblem=0', 'example.p'], stdout=PIPE, stderr=PIPE)
 
     return {"message": "Process started"}
 
 
-@app.delete("/api/top", responses={400: {"description": "Not running"}})
+@app.delete("/api/spass", responses={400: {"description": "Not running"}})
 async def stop_process():
     global process
 
@@ -38,7 +38,7 @@ async def stop_process():
     return {"message": "Process stopped"}
 
 
-@app.get("/api/top")
+@app.get("/api/spass")
 async def get_process_status():
     global process
     if not is_running(process):
@@ -48,7 +48,7 @@ async def get_process_status():
             "memory%": proc.memory_percent()}
 
 
-@app.get("/api/top/result", responses={404: {"description": "Not Found"}})
+@app.get("/api/spass/result", responses={404: {"description": "Not Found"}})
 async def get_process_result():
     global process
 
