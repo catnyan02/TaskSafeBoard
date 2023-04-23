@@ -2,6 +2,9 @@ from fastapi import FastAPI, HTTPException
 import uvicorn
 from subprocess import Popen, PIPE
 
+import time
+from psutil import Process
+
 app = FastAPI(docs_url="/api/docs")
 
 process = None
@@ -38,7 +41,11 @@ async def stop_process():
 @app.get("/api/top")
 async def get_process_status():
     global process
-    return {"status": "Not running" if not is_running(process) else "Running"}
+    if not is_running(process):
+        return {"status": "Not running"}
+    proc = Process(process.pid)
+    return {"status": "Running", "time_elapsed": time.time() - proc.create_time(), "cpu%": proc.cpu_percent(),
+            "memory%": proc.memory_percent()}
 
 
 @app.get("/api/top/result")
