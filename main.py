@@ -14,7 +14,7 @@ def is_running(proc):
     return proc and proc.poll() is None
 
 
-@app.post("/api/top")
+@app.post("/api/top", responses={400: {"description": "Already running"}})
 async def start_process():
     global process
 
@@ -26,7 +26,7 @@ async def start_process():
     return {"message": "Process started"}
 
 
-@app.delete("/api/top")
+@app.delete("/api/top", responses={400: {"description": "Not running"}})
 async def stop_process():
     global process
 
@@ -48,7 +48,7 @@ async def get_process_status():
             "memory%": proc.memory_percent()}
 
 
-@app.get("/api/top/result")
+@app.get("/api/top/result", responses={404: {"description": "Not Found"}})
 async def get_process_result():
     global process
 
